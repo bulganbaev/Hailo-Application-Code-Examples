@@ -57,7 +57,7 @@ hailo_status post_processing_all(std::vector<std::shared_ptr<FeatureData<T>>> &f
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> random_index(0, COLORS.size() - 1);
 
-    // cv::VideoWriter video("./processed_video.mp4", cv::VideoWriter::fourcc('m','p','4','v'),30, cv::Size((int)org_width, (int)org_height));
+    cv::VideoWriter video("./processed_video.mp4", cv::VideoWriter::fourcc('m','p','4','v'),30, cv::Size((int)org_width, (int)org_height));
 
     m.lock();
     std::cout << YELLOW << "\n-I- Starting postprocessing\n" << std::endl << RESET;
@@ -111,8 +111,8 @@ hailo_status post_processing_all(std::vector<std::shared_ptr<FeatureData<T>>> &f
         // cv::imshow("Display window", frames[0]);
         // cv::waitKey(0);
 
-        // video.write(frames[0]);
-        // cv::imwrite("output_image.jpg", frames[0]);
+        video.write(frames[0]);
+        cv::imwrite("output_image.jpg", frames[0]);
         
         frames[0].release();
         
@@ -121,7 +121,7 @@ hailo_status post_processing_all(std::vector<std::shared_ptr<FeatureData<T>>> &f
         m.unlock();
     }
     postprocess_time = std::chrono::high_resolution_clock::now();
-    // video.release();
+    video.release();
 
     return status;
 }
