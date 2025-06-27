@@ -58,15 +58,20 @@ add_custom_target(xtensor-wrap ALL
 )
 # сразу после блока add_custom_target(xtensor-wrap ALL …)
 add_custom_command(TARGET xtensor-wrap POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-        ${EXTERNAL_INSTALL}/include/xtensor/containers
-        ${EXTERNAL_INSTALL}/include/containers
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-        ${EXTERNAL_INSTALL}/include/xtensor/core
-        ${EXTERNAL_INSTALL}/include/core
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-        ${EXTERNAL_INSTALL}/include/xtensor/views
-        ${EXTERNAL_INSTALL}/include/views
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/link_xtensor_dirs.cmake
+)
+
+file(WRITE ${CMAKE_BINARY_DIR}/link_xtensor_dirs.cmake
+        "file(GLOB dirs \"${EXTERNAL_INSTALL}/include/xtensor/*\")\n"
+        "foreach(d IN LISTS dirs)\n"
+        "  if(IS_DIRECTORY \${d})\n"
+        "    get_filename_component(base \${d} NAME)\n"
+        "    set(link \"${EXTERNAL_INSTALL}/include/\${base}\")\n"
+        "    if(NOT EXISTS \${link})\n"
+        "      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \${d} \${link})\n"
+        "    endif()\n"
+        "  endif()\n"
+        "endforeach()\n"
 )
 
 
