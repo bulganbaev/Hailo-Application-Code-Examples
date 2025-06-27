@@ -56,6 +56,19 @@ add_custom_target(xtensor-wrap ALL
         DEPENDS xtensorblas-install        # ждём, пока xtensor уже установлен
         COMMENT "Creating wrapper x*.hpp links in xtensor/"
 )
+# сразу после блока add_custom_target(xtensor-wrap ALL …)
+add_custom_command(TARGET xtensor-wrap POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${EXTERNAL_INSTALL}/include/xtensor/containers
+        ${EXTERNAL_INSTALL}/include/containers
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${EXTERNAL_INSTALL}/include/xtensor/core
+        ${EXTERNAL_INSTALL}/include/core
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${EXTERNAL_INSTALL}/include/xtensor/views
+        ${EXTERNAL_INSTALL}/include/views
+)
+
 
 file(WRITE ${CMAKE_BINARY_DIR}/wrap_xtensor.cmake
         "file(GLOB_RECURSE hdrs \"${EXTERNAL_INSTALL}/include/xtensor/*/x*.hpp\")\n"
